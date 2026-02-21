@@ -63,7 +63,8 @@
                 <div class="hero-buttons">
                     <a href="book-service.html" class="btn btn-primary btn-lg" data-i18n="hero_btn_services">Browse
                         Services</a>
-                    <button id="installBtn" class="btn btn-accent btn-lg" style="display:none;">📲 Download App</button>
+                    <button id="installBtn" class="btn btn-accent btn-lg" style="display:none;"
+                        onclick="triggerInstall()">📲 Download App</button>
                     <button class="btn btn-secondary btn-lg" onclick="openQRModal()">📱 Scan QR to App</button>
                 </div>
                 <div class="hero-stats">
@@ -260,38 +261,7 @@
             }
         });
 
-        // PWA Registration
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').then(reg => {
-                    console.log('SW Registered!', reg);
-                }).catch(err => console.log('SW Registration failed:', err));
-            });
-        }
-
-
-        // Install PWA
-        let deferredPrompt;
-        const installBtn = document.getElementById('installBtn');
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            if (installBtn) installBtn.style.display = 'inline-flex';
-        });
-
-        if (installBtn) {
-            installBtn.addEventListener('click', () => {
-                if (!deferredPrompt) return;
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('User accepted the install prompt');
-                    }
-                    deferredPrompt = null;
-                    installBtn.style.display = 'none';
-                });
-            });
-        }
+        // PWA Installation Handling is now in app.js
     </script>
 </body>
 

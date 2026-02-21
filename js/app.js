@@ -58,8 +58,10 @@ function loginUser(userData) {
 }
 
 function logoutUser() {
-    localStorage.removeItem('kc_currentUser');
-    window.location.href = 'index.html';
+    if (confirm(t('logout_confirm') || "Are you sure you want to log out?")) {
+        localStorage.removeItem('kc_currentUser');
+        window.location.href = 'index.html';
+    }
 }
 
 function updateAuthUI() {
@@ -229,3 +231,36 @@ function renderFooter() {
         document.body.appendChild(fab);
     }
 }
+
+
+// PWA Installation Handling
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const installBtns = document.querySelectorAll('.pwa-install-btn, #installBtn');
+    installBtns.forEach(btn => btn.style.display = 'inline-flex');
+});
+
+function triggerInstall() {
+    if (!deferredPrompt) {
+        showToast('Native installation not supported or already installed. Use the QR code instead!', 'info');
+        openQRModal();
+        return;
+    }
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+            console.log('User accepted the install prompt');
+        }
+        deferredPrompt = null;
+        const installBtns = document.querySelectorAll('.pwa-install-btn, #installBtn');
+        installBtns.forEach(btn => btn.style.display = 'none');
+    });
+}
+
+// Redirect logout confirm translation if missing
+if (typeof t !== 'undefined' && !t('logout_confirm')) {
+    // This is just a safety if i18n isn't ready
+}
+
