@@ -252,11 +252,101 @@ function triggerInstall() {
     deferredPrompt.userChoice.then((choiceResult) => {
         if (choiceResult.outcome === 'accepted') {
             console.log('User accepted the install prompt');
+            showDownloadProgress();
         }
         deferredPrompt = null;
         const installBtns = document.querySelectorAll('.pwa-install-btn, #installBtn');
         installBtns.forEach(btn => btn.style.display = 'none');
     });
+}
+
+function showDownloadProgress() {
+    // Create progress overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'download-progress-overlay';
+    overlay.innerHTML = `
+        <div class="download-progress-card">
+            <div class="brand-icon" style="font-size: 3rem; margin-bottom: var(--space-md);">🍳</div>
+            <h3 style="margin-bottom: var(--space-xs);">Installing Kigali Cooker...</h3>
+            <p style="color: var(--text-dark-secondary); font-size: 0.9rem; margin-bottom: var(--space-lg);">Please wait while we set up the app on your device.</p>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill"></div>
+            </div>
+            <div class="progress-status" style="margin-top: var(--space-sm); font-size: 0.85rem; color: var(--primary-400);">Preparing...</div>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+
+    // Add CSS dynamically
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .download-progress-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-lg);
+        }
+        .download-progress-card {
+            background: var(--bg-dark-card);
+            border: 1px solid var(--border-dark);
+            border-radius: var(--radius-xl);
+            padding: var(--space-2xl);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-dark-input);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-500), var(--primary-300));
+            transition: width 0.3s ease;
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Simulate progress
+    const fill = overlay.querySelector('.progress-bar-fill');
+    const status = overlay.querySelector('.progress-status');
+    let progress = 0;
+
+    const messages = ["Downloading assets...", "Finalizing setup...", "Installing App...", "Done!"];
+    let msgIdx = 0;
+
+    const interval = setInterval(() => {
+        progress += Math.random() * 15;
+        if (progress > 100) progress = 100;
+
+        fill.style.width = `${progress}%`;
+
+        if (progress > 30 && msgIdx === 0) msgIdx = 1;
+        if (progress > 60 && msgIdx === 1) msgIdx = 2;
+        if (progress >= 100) {
+            msgIdx = 3;
+            clearInterval(interval);
+            setTimeout(() => {
+                overlay.style.opacity = '0';
+                overlay.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => {
+                    overlay.remove();
+                    showToast('Installation Complete! You can now find Kigali Cooker on your home screen. 📱🍳', 'success');
+                }, 500);
+            }, 1000);
+        }
+        status.innerText = messages[msgIdx];
+    }, 400);
 }
 
 
