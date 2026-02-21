@@ -193,7 +193,7 @@ function renderFooter() {
                         <li><a href="training.html" style="color:var(--text-dark-secondary);text-decoration:none;"><span data-i18n="nav_training">${t('nav_training')}</span></a></li>
                         <li><a href="workers.html" style="color:var(--text-dark-secondary);text-decoration:none;"><span data-i18n="nav_workers">${t('nav_workers')}</span></a></li>
                         <li><a href="book-service.html" style="color:var(--text-dark-secondary);text-decoration:none;"><span data-i18n="nav_services">${t('nav_services')}</span></a></li>
-                        <li><a href="#" onclick="openQRModal(); return false;" style="color:var(--primary-400);text-decoration:none;font-weight:600;">📲 Download App</a></li>
+                        <li><a href="#" onclick="triggerInstall(); return false;" style="color:var(--primary-400);text-decoration:none;font-weight:600;">📲 Download App</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
