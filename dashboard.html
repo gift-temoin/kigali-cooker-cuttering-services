@@ -191,6 +191,15 @@
             }
 
             loadBookings();
+
+            // Check for download prompt
+            if (localStorage.getItem('kc_showDownloadPrompt') === 'true') {
+                localStorage.removeItem('kc_showDownloadPrompt');
+                setTimeout(() => {
+                    openQRModal();
+                    showToast('Welcome! Scan to download our app for the best experience. 📱', 'info');
+                }, 1500);
+            }
         });
 
         function handlePhotoUpload(input) {

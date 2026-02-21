@@ -105,6 +105,7 @@
             if (worker) {
                 loginUser({ ...worker, isAdmin: false, role: 'worker' });
                 showToast('Welcome back, ' + worker.name + '!', 'success');
+                localStorage.setItem('kc_showDownloadPrompt', 'true');
                 setTimeout(() => window.location.href = 'dashboard.html', 1000);
                 return;
             }

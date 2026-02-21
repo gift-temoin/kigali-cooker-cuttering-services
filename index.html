@@ -269,54 +269,6 @@
             });
         }
 
-        // QR Modal
-        function openQRModal() {
-            let currentUrl = window.location.href;
-            if (currentUrl.startsWith('file:')) {
-                currentUrl = 'https://gift-temoin.github.io/kigali-cooker-cuttering-services/';
-            }
-            const qrImg = document.getElementById('qrCodeImg');
-            const loader = document.getElementById('qrLoader');
-
-            loader.style.display = 'flex';
-            qrImg.style.opacity = '0';
-
-            qrImg.onload = function () {
-                loader.style.display = 'none';
-                qrImg.style.opacity = '1';
-                qrImg.style.transition = 'opacity 0.5s ease';
-            };
-
-            qrImg.onerror = function () {
-                this.src = 'https://placehold.co/200x200?text=QR+Load+Failed';
-                loader.style.display = 'none';
-                showToast('Failed to load QR code. Please check your internet connection.', 'error');
-            };
-
-            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(currentUrl)}&margin=10`;
-            openModal('qrModal');
-        }
-
-        function downloadQR() {
-            const qrImg = document.getElementById('qrCodeImg');
-            const link = document.createElement('a');
-            link.href = qrImg.src;
-            link.download = 'kigali-cooker-qr.png';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            showToast('QR Code download started! 📥');
-        }
-
-        function copyAppUrl() {
-            let currentUrl = window.location.href;
-            if (currentUrl.startsWith('file:')) {
-                currentUrl = 'https://gift-temoin.github.io/kigali-cooker-cuttering-services/';
-            }
-            navigator.clipboard.writeText(currentUrl).then(() => {
-                showToast('Link copied to clipboard! 🔗');
-            });
-        }
 
         // Install PWA
         let deferredPrompt;
