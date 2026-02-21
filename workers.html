@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workers Directory - Kigali Cooker Catering</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">
+                <div class="brand-icon">🍳</div><span>Kigali Cooker</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" data-i18n="nav_home">Home</a>
+                <a href="training.html" data-i18n="nav_training">Training</a>
+                <a href="workers.html" class="active" data-i18n="nav_workers">Workers</a>
+                <a href="book-service.html" data-i18n="nav_services">Book Service</a>
+                <a href="dashboard.html" class="auth-dashboard" data-i18n="nav_dashboard">Dashboard</a>
+                <a href="admin.html" class="auth-admin" data-i18n="nav_admin">Admin Panel</a>
+            </div>
+            <div class="nav-actions">
+                <div class="lang-toggle">
+                    <button class="lang-btn active" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="kn">KN</button>
+                </div>
+                <a href="login.html" class="btn btn-sm btn-secondary auth-login" data-i18n="nav_login">Login</a>
+                <a href="register.html" class="btn btn-sm btn-primary auth-register"
+                    data-i18n="nav_register">Register</a>
+                <button class="btn btn-sm btn-danger auth-logout" onclick="logoutUser()" style="display:none"
+                    data-i18n="nav_logout">Logout</button>
+            </div>
+            <button class="hamburger"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="container">
+            <h1 data-i18n="nav_workers">Workers</h1>
+            <p>Browse our directory of admin-verified professional workers.</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="search-filter-bar">
+                <div class="search-input-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="workerSearch" data-i18n="search_placeholder" placeholder="Search workers...">
+                </div>
+                <select class="filter-select" id="filterLocation">
+                    <option value="" data-i18n="filter_location">Filter by Location</option>
+                    <option value="Gasabo">Gasabo</option>
+                    <option value="Kicukiro">Kicukiro</option>
+                    <option value="Nyarugenge">Nyarugenge</option>
+                </select>
+                <select class="filter-select" id="filterRating">
+                    <option value="" data-i18n="filter_rating">Filter by Rating</option>
+                    <option value="4.5">4.5+ ⭐</option>
+                    <option value="4">4+ ⭐</option>
+                    <option value="3">3+ ⭐</option>
+                </select>
+            </div>
+            <div class="grid grid-4" id="workersGrid"></div>
+            <div class="empty-state" id="noWorkers" style="display:none;">
+                <div class="empty-state-icon">🔍</div>
+                <h3>No workers found</h3>
+                <p>Try adjusting your search or filters.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer placeholder (dynamic) -->
+    <footer class="footer"></footer>
+    <a href="https://wa.me/250789296912" target="_blank" class="whatsapp-fab">💬</a>
+
+    <script src="js/data.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        const colors = ['#FF8F00', '#00897B', '#5C6BC0', '#E53935', '#43A047', '#8E24AA', '#F4511E', '#039BE5'];
+        const icons = ['👨‍🍳', '💇‍♀️', '🧼', '🎉', '🛒', '👩‍🍳', '📋', '💅'];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderWorkers();
+            document.getElementById('workerSearch').addEventListener('input', renderWorkers);
+            document.getElementById('filterLocation').addEventListener('change', renderWorkers);
+            document.getElementById('filterRating').addEventListener('change', renderWorkers);
+        });
+
+        function renderWorkers() {
+            const search = document.getElementById('workerSearch').value.toLowerCase();
+            const locFilter = document.getElementById('filterLocation').value;
+            const ratingFilter = parseFloat(document.getElementById('filterRating').value) || 0;
+
+            let workers = getWorkers().filter(w => w.verified && w.status === 'active');
+            if (search) workers = workers.filter(w => w.name.toLowerCase().includes(search) || w.profession.toLowerCase().includes(search));
+            if (locFilter) workers = workers.filter(w => w.location === locFilter);
+            if (ratingFilter) workers = workers.filter(w => w.rating >= ratingFilter);
+
+            const grid = document.getElementById('workersGrid');
+            const empty = document.getElementById('noWorkers');
+
+            if (workers.length === 0) {
+                grid.style.display = 'none';
+                empty.style.display = '';
+                return;
+            }
+            grid.style.display = '';
+            empty.style.display = 'none';
+
+            grid.innerHTML = workers.map((w, i) => `
+        <div class="worker-card">
+          <div class="worker-card-img">
+            <div style="width:100%;height:100%;background:linear-gradient(135deg,${colors[i % colors.length]},${colors[(i + 3) % colors.length]});display:flex;align-items:center;justify-content:center;font-size:3.5rem;color:#fff;">${icons[i % icons.length]}</div>
+            ${w.featured ? '<div class="worker-card-badge">⭐ Featured</div>' : ''}
+          </div>
+          <div class="worker-card-body">
+            <div class="worker-card-name">${w.name}</div>
+            <div class="worker-card-profession">${w.profession}</div>
+            <div class="worker-card-location">📍 ${w.location}, Kigali</div>
+            <div class="worker-card-rating">
+              ${renderStars(w.rating)}
+              <span class="rating-value">${w.rating}</span>
+              <span style="color:var(--text-dark-secondary);font-size:0.85rem">(${w.reviews})</span>
+            </div>
+            <div style="margin-bottom:var(--space-sm);"><span class="badge badge-verified" data-i18n="verified">✓ Verified</span></div>
+            <div class="worker-card-footer">
+              <a href="worker-detail.html?id=${w.id}" class="btn btn-sm btn-secondary" data-i18n="view_profile">View Profile</a>
+              <a href="book-service.html?worker=${w.id}" class="btn btn-sm btn-primary" data-i18n="book_now">Book Now</a>
+            </div>
+          </div>
+        </div>
+      `).join('');
+        }
+    </script>
+</body>
+
+</html>

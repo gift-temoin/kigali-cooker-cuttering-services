@@ -1,0 +1,21 @@
+{
+  "name": "Kigali Cooker",
+  "short_name": "KigaliCooker",
+  "description": "Connecting you with trusted professional cooks and caterers in Kigali.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#0F1419",
+  "theme_color": "#FF8F00",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3448/3448099.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3448/3448099.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

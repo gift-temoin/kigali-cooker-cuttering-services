@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Kigali Cooker Catering</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">
+                <div class="brand-icon">🍳</div><span>Kigali Cooker</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" data-i18n="nav_home">Home</a>
+                <a href="training.html" data-i18n="nav_training">Training</a>
+                <a href="workers.html" data-i18n="nav_workers">Workers</a>
+                <a href="book-service.html" data-i18n="nav_services">Book Service</a>
+            </div>
+            <div class="nav-actions">
+                <div class="lang-toggle">
+                    <button class="lang-btn active" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="kn">KN</button>
+                </div>
+                <a href="login.html" class="btn btn-sm btn-secondary auth-login" data-i18n="nav_login">Login</a>
+            </div>
+            <button class="hamburger"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="container">
+            <h1 data-i18n="register_title">Create Account</h1>
+            <p>Join Kigali Cooker to access trusted professionals and book services.</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container" style="max-width:580px;">
+            <div class="card" style="padding:var(--space-xl);">
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label class="form-label">I am a...</label>
+                        <div style="display:flex;gap:var(--space-md);">
+                            <label
+                                style="flex:1;cursor:pointer;border:1px solid var(--border-dark);padding:var(--space-md);border-radius:var(--radius-md);display:flex;align-items:center;gap:var(--space-sm);">
+                                <input type="radio" name="userRole" value="client" checked
+                                    onclick="toggleWorkerFields(false)">
+                                <span>Client / Customer</span>
+                            </label>
+                            <label
+                                style="flex:1;cursor:pointer;border:1px solid var(--border-dark);padding:var(--space-md);border-radius:var(--radius-md);display:flex;align-items:center;gap:var(--space-sm);">
+                                <input type="radio" name="userRole" value="worker" onclick="toggleWorkerFields(true)">
+                                <span>Professional Worker</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="full_name">Full Name</label>
+                        <input type="text" class="form-input" id="regName" required placeholder="Enter your full name">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" data-i18n="email">Email Address</label>
+                            <input type="email" class="form-input" id="regEmail" required placeholder="you@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" data-i18n="phone">Phone Number</label>
+                            <input type="tel" class="form-input" id="regPhone" required placeholder="07XXXXXXXX">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="password">Password</label>
+                        <input type="password" class="form-input" id="regPassword" required
+                            placeholder="Create a password" minlength="6">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" data-i18n="address">Street / Address</label>
+                            <input type="text" class="form-input" id="regAddress" required
+                                placeholder="Your street address">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" data-i18n="location">Location</label>
+                            <select class="form-select" id="regLocation" required>
+                                <option value="">Select Location</option>
+                                <option value="Gasabo">Gasabo</option>
+                                <option value="Kicukiro">Kicukiro</option>
+                                <option value="Nyarugenge">Nyarugenge</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg" style="width:100%;"
+                        data-i18n="register_btn">Create Account</button>
+                </form>
+                <p style="text-align:center;margin-top:var(--space-lg);color:var(--text-dark-secondary);">
+                    <span data-i18n="already_account">Already have an account?</span>
+                    <a href="login.html" data-i18n="nav_login">Login</a>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Verification Modal -->
+    <div class="modal-overlay" id="verifyModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 data-i18n="verify_email">Verify Email</h3>
+                <button class="modal-close" onclick="closeModal('verifyModal')">✕</button>
+            </div>
+            <p style="color:var(--text-dark-secondary);margin-bottom:var(--space-md);" data-i18n="enter_code">A 6-digit
+                verification code has been sent to your email. Please enter it below to activate your account.</p>
+            <div class="form-group">
+                <input type="text" class="form-input" id="verifyCodeInput" placeholder="Enter 6-digit code"
+                    maxlength="6" style="text-align:center;font-size:1.3rem;letter-spacing:6px;">
+            </div>
+            <button class="btn btn-primary" style="width:100%;" onclick="verifyCode()"
+                data-i18n="confirm">Confirm</button>
+        </div>
+    </div>
+
+    <!-- Footer placeholder (dynamic) -->
+    <footer class="footer"></footer>
+    <a href="https://wa.me/250789296912" target="_blank" class="whatsapp-fab">💬</a>
+
+    <script src="js/data.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        let pendingUser = null;
+        let verificationCode = '';
+
+        function toggleWorkerFields(isWorker) {
+            // Future extension: add skills/profession fields here
+            console.log("Worker mode:", isWorker);
+        }
+
+        document.getElementById('registerForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const address = document.getElementById('regAddress').value.trim();
+            const location = document.getElementById('regLocation').value;
+            const role = document.querySelector('input[name="userRole"]:checked').value;
+
+            // Check existing
+            const users = getUsers();
+            const workers = getWorkers();
+            if (users.find(u => u.email === email) || workers.find(w => w.email === email)) {
+                showToast('Email already registered!', 'error');
+                return;
+            }
+
+            pendingUser = {
+                id: role === 'worker' ? generateId('WK') : generateId('U'),
+                name, email, phone, password, address, location,
+                role,
+                status: 'active',
+                createdAt: new Date().toISOString()
+            };
+
+            if (role === 'worker') {
+                pendingUser.profession = 'Service Professional';
+                pendingUser.skills = [];
+                pendingUser.description = '';
+                pendingUser.rating = 0;
+                pendingUser.reviews = 0;
+                pendingUser.verified = false;
+                pendingUser.featured = false;
+                pendingUser.photo = '';
+            }
+
+            verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+            // "Send" Email - Real simulated behavior
+            console.log("Verification Code sent to " + email + ": " + verificationCode);
+            showToast('Verification code sent to ' + email, 'info');
+
+            // For testing purposes in this environment, we'll log it. 
+            // In a real app, this would be handled by a backend.
+            alert("Verification Code sent to " + email + " is: " + verificationCode);
+
+            openModal('verifyModal');
+        });
+
+        function verifyCode() {
+            const input = document.getElementById('verifyCodeInput').value.trim();
+            if (input === verificationCode) {
+                if (pendingUser.role === 'worker') {
+                    const workers = getWorkers();
+                    workers.push(pendingUser);
+                    saveWorkers(workers);
+                    loginUser({ ...pendingUser, isAdmin: false, role: 'worker' });
+                } else {
+                    const users = getUsers();
+                    users.push(pendingUser);
+                    saveUsers(users);
+                    loginUser({ ...pendingUser, isAdmin: false, role: 'client' });
+                }
+                showToast('Account verified and created successfully!', 'success');
+                setTimeout(() => window.location.href = 'dashboard.html', 1500);
+            } else {
+                showToast('Invalid verification code!', 'error');
+            }
+        }
+    </script>
+</body>
+
+</html>

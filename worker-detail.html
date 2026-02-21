@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Profile - Kigali Cooker Catering</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">
+                <div class="brand-icon">🍳</div><span>Kigali Cooker</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" data-i18n="nav_home">Home</a>
+                <a href="training.html" data-i18n="nav_training">Training</a>
+                <a href="workers.html" class="active" data-i18n="nav_workers">Workers</a>
+                <a href="book-service.html" data-i18n="nav_services">Book Service</a>
+                <a href="dashboard.html" class="auth-dashboard" data-i18n="nav_dashboard">Dashboard</a>
+                <a href="admin.html" class="auth-admin" data-i18n="nav_admin">Admin Panel</a>
+            </div>
+            <div class="nav-actions">
+                <div class="lang-toggle">
+                    <button class="lang-btn active" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="kn">KN</button>
+                </div>
+                <a href="login.html" class="btn btn-sm btn-secondary auth-login" data-i18n="nav_login">Login</a>
+                <a href="register.html" class="btn btn-sm btn-primary auth-register"
+                    data-i18n="nav_register">Register</a>
+                <button class="btn btn-sm btn-danger auth-logout" onclick="logoutUser()" style="display:none"
+                    data-i18n="nav_logout">Logout</button>
+            </div>
+            <button class="hamburger"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+
+    <section class="page-header" id="workerHeader">
+        <div class="container">
+            <h1 id="workerName">Worker Profile</h1>
+            <p id="workerProfession"></p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div style="display:grid;grid-template-columns:1fr 2fr;gap:var(--space-xl);">
+                <!-- Left: Profile Card -->
+                <div>
+                    <div class="card" style="text-align:center;">
+                        <div id="workerPhoto"
+                            style="width:150px;height:150px;border-radius:50%;margin:0 auto var(--space-lg);background:linear-gradient(135deg,var(--primary-500),var(--accent-500));display:flex;align-items:center;justify-content:center;font-size:4rem;color:#fff;">
+                            👨‍🍳</div>
+                        <h2 id="wName" style="font-size:1.4rem;margin-bottom:4px;"></h2>
+                        <p id="wProfession" style="color:var(--primary-400);margin-bottom:var(--space-md);"></p>
+                        <span class="badge badge-verified" data-i18n="verified">✓ Verified</span>
+                        <div style="margin-top:var(--space-lg);text-align:left;">
+                            <div
+                                style="padding:var(--space-sm) 0;border-bottom:1px solid var(--border-dark);display:flex;justify-content:space-between;">
+                                <span style="color:var(--text-dark-secondary);" data-i18n="worker_id">Worker ID</span>
+                                <span id="wId" style="font-weight:600;"></span>
+                            </div>
+                            <div
+                                style="padding:var(--space-sm) 0;border-bottom:1px solid var(--border-dark);display:flex;justify-content:space-between;">
+                                <span style="color:var(--text-dark-secondary);" data-i18n="location">Location</span>
+                                <span id="wLocation" style="font-weight:600;"></span>
+                            </div>
+                            <div
+                                style="padding:var(--space-sm) 0;border-bottom:1px solid var(--border-dark);display:flex;justify-content:space-between;">
+                                <span style="color:var(--text-dark-secondary);" data-i18n="rating">Rating</span>
+                                <span id="wRating" style="font-weight:600;color:var(--primary-400);"></span>
+                            </div>
+                            <div style="padding:var(--space-sm) 0;display:flex;justify-content:space-between;">
+                                <span style="color:var(--text-dark-secondary);" data-i18n="reviews">Reviews</span>
+                                <span id="wReviews" style="font-weight:600;"></span>
+                            </div>
+                        </div>
+                        <div style="margin-top:var(--space-lg);display:flex;flex-direction:column;gap:var(--space-sm);">
+                            <a id="bookBtn" href="#" class="btn btn-primary" data-i18n="book_now">Book Now</a>
+                            <a href="https://wa.me/250789296912" target="_blank" class="btn btn-success"
+                                data-i18n="contact_whatsapp">💬 WhatsApp</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right: Details -->
+                <div>
+                    <div class="card" style="margin-bottom:var(--space-lg);">
+                        <h3 style="margin-bottom:var(--space-md);" data-i18n="about">About</h3>
+                        <p id="wDescription" style="color:var(--text-dark-secondary);line-height:1.7;"></p>
+                    </div>
+                    <div class="card" style="margin-bottom:var(--space-lg);">
+                        <h3 style="margin-bottom:var(--space-md);" data-i18n="skills">Skills</h3>
+                        <div id="wSkills" style="display:flex;flex-wrap:wrap;gap:var(--space-sm);"></div>
+                    </div>
+                    <div class="card" style="margin-bottom:var(--space-lg);">
+                        <h3 style="margin-bottom:var(--space-md);" data-i18n="conduct">Professional Conduct</h3>
+                        <p id="wConduct" style="color:var(--text-dark-secondary);"></p>
+                    </div>
+                    <div class="card">
+                        <h3 style="margin-bottom:var(--space-md);" data-i18n="reviews">Reviews</h3>
+                        <div id="wReviewsList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer placeholder (dynamic) -->
+    <footer class="footer"></footer>
+    <a href="https://wa.me/250789296912" target="_blank" class="whatsapp-fab">💬</a>
+
+    <script src="js/data.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const workerId = params.get('id');
+            const workers = getWorkers();
+            const worker = workers.find(w => w.id === workerId);
+            if (!worker) { window.location.href = 'workers.html'; return; }
+
+            document.title = worker.name + ' - Kigali Cooker';
+            document.getElementById('workerName').textContent = worker.name;
+            document.getElementById('workerProfession').textContent = worker.profession;
+            document.getElementById('wName').textContent = worker.name;
+            document.getElementById('wProfession').textContent = worker.profession;
+            document.getElementById('wId').textContent = worker.id;
+            document.getElementById('wLocation').textContent = worker.location + ', Kigali';
+            document.getElementById('wRating').innerHTML = '⭐ ' + worker.rating;
+            document.getElementById('wReviews').textContent = worker.reviews;
+            document.getElementById('wDescription').textContent = worker.description;
+            document.getElementById('wConduct').textContent = worker.conduct;
+            document.getElementById('bookBtn').href = 'book-service.html?worker=' + worker.id;
+            document.getElementById('wSkills').innerHTML = worker.skills.map(s =>
+                `<span class="badge badge-featured">${s}</span>`
+            ).join('');
+
+            // Show reviews from completed requests
+            const requests = getRequests().filter(r => r.workerId === workerId && r.review);
+            const reviewList = document.getElementById('wReviewsList');
+            if (requests.length > 0) {
+                reviewList.innerHTML = requests.map(r => `
+          <div class="review-card">
+            <div class="review-header">
+              <div class="review-author">
+                <div class="review-avatar">${r.userName.charAt(0)}</div>
+                <div><strong>${r.userName}</strong><p class="review-date">${new Date(r.createdAt).toLocaleDateString()}</p></div>
+              </div>
+              ${renderStars(r.rating)}
+            </div>
+            <p class="review-text">${r.review}</p>
+          </div>
+        `).join('');
+            } else {
+                reviewList.innerHTML = '<p style="color:var(--text-dark-secondary);">No reviews yet.</p>';
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Kigali Cooker Catering</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">
+                <div class="brand-icon">🍳</div><span>Kigali Cooker</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" data-i18n="nav_home">Home</a>
+                <a href="training.html" data-i18n="nav_training">Training</a>
+                <a href="workers.html" data-i18n="nav_workers">Workers</a>
+                <a href="book-service.html" data-i18n="nav_services">Book Service</a>
+                <a href="dashboard.html" class="active auth-dashboard" data-i18n="nav_dashboard">Dashboard</a>
+                <a href="admin.html" class="auth-admin" data-i18n="nav_admin">Admin Panel</a>
+            </div>
+            <div class="nav-actions">
+                <div class="lang-toggle">
+                    <button class="lang-btn active" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="kn">KN</button>
+                </div>
+                <button class="btn btn-sm btn-danger auth-logout" onclick="logoutUser()"
+                    data-i18n="nav_logout">Logout</button>
+            </div>
+            <button class="hamburger"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="container">
+            <h1 data-i18n="nav_dashboard">Dashboard</h1>
+            <p id="welcomeMsg">Welcome back!</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <!-- Stats -->
+            <div class="grid grid-4" style="margin-bottom:var(--space-2xl);">
+                <div class="admin-stat-card">
+                    <div class="stat-value" id="totalBookings">0</div>
+                    <div class="stat-label" data-i18n="my_bookings">My Bookings</div>
+                </div>
+                <div class="admin-stat-card">
+                    <div class="stat-value" id="pendingCount">0</div>
+                    <div class="stat-label" data-i18n="pending">Pending</div>
+                </div>
+                <div class="admin-stat-card">
+                    <div class="stat-value" id="completedCount">0</div>
+                    <div class="stat-label" data-i18n="completed">Completed</div>
+                </div>
+                <div class="admin-stat-card">
+                    <div class="stat-value" style="color:var(--accent-400);" id="profileLocation">—</div>
+                    <div class="stat-label" data-i18n="location">Location</div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('bookings')" data-i18n="booking_history">Booking
+                    History</button>
+                <button class="tab" onclick="showTab('profile')" data-i18n="profile">Profile</button>
+            </div>
+
+            <!-- Bookings Tab -->
+            <div id="tab-bookings">
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th data-i18n="service">Service</th>
+                                <th data-i18n="worker">Worker</th>
+                                <th data-i18n="date">Date</th>
+                                <th data-i18n="price">Price</th>
+                                <th data-i18n="status">Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bookingsTable"></tbody>
+                    </table>
+                </div>
+                <div class="empty-state" id="noBookings" style="display:none;">
+                    <div class="empty-state-icon">📋</div>
+                    <h3 data-i18n="no_bookings">No bookings yet.</h3>
+                    <p><a href="book-service.html" class="btn btn-primary" style="margin-top:var(--space-md);"
+                            data-i18n="hero_btn_services">Browse Services</a></p>
+                </div>
+            </div>
+
+            <!-- Profile Tab -->
+            <div id="tab-profile" style="display:none;">
+                <div class="card" style="max-width:600px;padding:var(--space-xl);">
+                    <div class="profile-card">
+                        <div class="profile-avatar" id="profileAvatar"
+                            style="overflow:hidden;background-size:cover;background-position:center;">U</div>
+                        <h3 id="profileName">—</h3>
+                        <p id="profileEmail">—</p>
+                        <div id="workerUploadActions" style="display:none;margin-top:var(--space-md);">
+                            <label class="btn btn-sm btn-secondary" style="cursor:pointer;">
+                                📷 Change Photo
+                                <input type="file" id="photoInput" accept="image/*" style="display:none;"
+                                    onchange="handlePhotoUpload(this)">
+                            </label>
+                        </div>
+                    </div>
+                    <div
+                        style="padding:var(--space-sm) 0;border-bottom:1px solid var(--border-dark);display:flex;justify-content:space-between;">
+                        <span style="color:var(--text-dark-secondary);" data-i18n="phone">Phone</span>
+                        <span id="profilePhone" style="font-weight:500;">—</span>
+                    </div>
+                    <div
+                        style="padding:var(--space-sm) 0;border-bottom:1px solid var(--border-dark);display:flex;justify-content:space-between;">
+                        <span style="color:var(--text-dark-secondary);" data-i18n="address">Address</span>
+                        <span id="profileAddress" style="font-weight:500;">—</span>
+                    </div>
+                    <div style="padding:var(--space-sm) 0;display:flex;justify-content:space-between;">
+                        <span style="color:var(--text-dark-secondary);" data-i18n="location">Location</span>
+                        <span id="profileLoc" style="font-weight:500;">—</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rating Modal -->
+    <div class="modal-overlay" id="rateModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 data-i18n="rate_service">Rate Service</h3>
+                <button class="modal-close" onclick="closeModal('rateModal')">✕</button>
+            </div>
+            <div style="text-align:center;margin-bottom:var(--space-lg);">
+                <div id="rateStars" style="font-size:2rem;cursor:pointer;">
+                    <span data-val="1" onclick="setRating(1)">☆</span>
+                    <span data-val="2" onclick="setRating(2)">☆</span>
+                    <span data-val="3" onclick="setRating(3)">☆</span>
+                    <span data-val="4" onclick="setRating(4)">☆</span>
+                    <span data-val="5" onclick="setRating(5)">☆</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <textarea class="form-textarea" id="reviewText" placeholder="Write your review..." rows="3"
+                    style="min-height:80px;"></textarea>
+            </div>
+            <button class="btn btn-primary" style="width:100%;" onclick="submitRating()">Submit Review</button>
+        </div>
+    </div>
+
+    <!-- Footer placeholder (dynamic) -->
+    <footer class="footer"></footer>
+    <a href="https://wa.me/250789296912" target="_blank" class="whatsapp-fab">💬</a>
+
+    <script src="js/data.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        let currentRating = 0;
+        let ratingRequestId = '';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = getCurrentUser();
+            if (!user || user.isAdmin) { window.location.href = 'login.html'; return; }
+            document.getElementById('welcomeMsg').textContent = 'Welcome, ' + user.name + '!';
+            document.getElementById('profileName').textContent = user.name;
+            document.getElementById('profileEmail').textContent = user.email;
+            document.getElementById('profilePhone').textContent = user.phone || '—';
+            document.getElementById('profileAddress').textContent = user.address || '—';
+            document.getElementById('profileLoc').textContent = user.location || '—';
+            document.getElementById('profileLocation').textContent = user.location || '—';
+
+            if (user.photo) {
+                document.getElementById('profileAvatar').style.backgroundImage = `url(${user.photo})`;
+                document.getElementById('profileAvatar').textContent = '';
+            } else {
+                document.getElementById('profileAvatar').textContent = user.name.charAt(0).toUpperCase();
+            }
+
+            if (user.role === 'worker') {
+                document.getElementById('workerUploadActions').style.display = 'block';
+            }
+
+            loadBookings();
+        });
+
+        function handlePhotoUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+            if (file.size > 1024 * 1024) { showToast('Image too large (max 1MB)', 'error'); return; }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const base64 = e.target.result;
+                const user = getCurrentUser();
+
+                if (user.role === 'worker') {
+                    if (updateWorkerPhoto(user.id, base64)) {
+                        user.photo = base64;
+                        localStorage.setItem('kc_currentUser', JSON.stringify(user));
+                        document.getElementById('profileAvatar').style.backgroundImage = `url(${base64})`;
+                        document.getElementById('profileAvatar').textContent = '';
+                        showToast('Profile photo updated!', 'success');
+                    }
+                } else {
+                    // Update client user photo if we want to allow that too
+                    const users = getUsers();
+                    const u = users.find(u => u.id === user.id);
+                    if (u) {
+                        u.photo = base64;
+                        saveUsers(users);
+                        user.photo = base64;
+                        localStorage.setItem('kc_currentUser', JSON.stringify(user));
+                        document.getElementById('profileAvatar').style.backgroundImage = `url(${base64})`;
+                        document.getElementById('profileAvatar').textContent = '';
+                        showToast('Profile photo updated!', 'success');
+                    }
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function loadBookings() {
+            const user = getCurrentUser();
+            const requests = getRequests().filter(r => r.userId === user.id);
+            document.getElementById('totalBookings').textContent = requests.length;
+            document.getElementById('pendingCount').textContent = requests.filter(r => r.status === 'pending').length;
+            document.getElementById('completedCount').textContent = requests.filter(r => r.status === 'completed').length;
+
+            const tbody = document.getElementById('bookingsTable');
+            const empty = document.getElementById('noBookings');
+
+            if (requests.length === 0) {
+                tbody.parentElement.parentElement.style.display = 'none';
+                empty.style.display = '';
+                return;
+            }
+
+            tbody.innerHTML = requests.map(r => {
+                const statusClass = `badge-${r.status}`;
+                const canRate = r.status === 'completed' && !r.review;
+                return `
+          <tr>
+            <td style="font-weight:600;">${r.id}</td>
+            <td>${r.serviceName}</td>
+            <td>${r.workerName}</td>
+            <td>${r.date}</td>
+            <td style="color:var(--primary-400);">${formatPrice(r.price)}</td>
+            <td><span class="badge ${statusClass}">${t(r.status)}</span></td>
+            <td>${canRate ? `<button class="btn btn-sm btn-accent" onclick="openRating('${r.id}')">${t('rate_service')}</button>` : (r.review ? '⭐ Rated' : '—')}</td>
+          </tr>
+        `;
+            }).join('');
+        }
+
+        function showTab(tab) {
+            document.querySelectorAll('.tabs .tab').forEach((t, i) => t.classList.toggle('active', i === (tab === 'bookings' ? 0 : 1)));
+            document.getElementById('tab-bookings').style.display = tab === 'bookings' ? '' : 'none';
+            document.getElementById('tab-profile').style.display = tab === 'profile' ? '' : 'none';
+        }
+
+        function setRating(val) {
+            currentRating = val;
+            document.querySelectorAll('#rateStars span').forEach(s => {
+                s.textContent = parseInt(s.dataset.val) <= val ? '★' : '☆';
+                s.style.color = parseInt(s.dataset.val) <= val ? 'var(--primary-500)' : 'var(--neutral-500)';
+            });
+        }
+
+        function openRating(requestId) {
+            ratingRequestId = requestId;
+            currentRating = 0;
+            document.getElementById('reviewText').value = '';
+            document.querySelectorAll('#rateStars span').forEach(s => { s.textContent = '☆'; s.style.color = ''; });
+            openModal('rateModal');
+        }
+
+        function submitRating() {
+            if (currentRating === 0) { showToast('Please select a rating!', 'error'); return; }
+            const review = document.getElementById('reviewText').value.trim();
+            const requests = getRequests();
+            const req = requests.find(r => r.id === ratingRequestId);
+            if (req) {
+                req.rating = currentRating;
+                req.review = review || 'Great service!';
+                saveRequests(requests);
+                // Update worker rating
+                const workers = getWorkers();
+                const worker = workers.find(w => w.id === req.workerId);
+                if (worker) {
+                    const workerReqs = requests.filter(r => r.workerId === worker.id && r.rating);
+                    const avgRating = workerReqs.reduce((sum, r) => sum + r.rating, 0) / workerReqs.length;
+                    worker.rating = Math.round(avgRating * 10) / 10;
+                    worker.reviews = workerReqs.length;
+                    saveWorkers(workers);
+                }
+                closeModal('rateModal');
+                showToast('Thank you for your review!', 'success');
+                loadBookings();
+            }
+        }
+    </script>
+</body>
+
+</html>

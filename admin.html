@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Kigali Cooker Catering</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">
+                <div class="brand-icon">🍳</div><span>Kigali Cooker</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" data-i18n="nav_home">Home</a>
+                <a href="training.html" data-i18n="nav_training">Training</a>
+                <a href="workers.html" data-i18n="nav_workers">Workers</a>
+                <a href="book-service.html" data-i18n="nav_services">Book Service</a>
+                <a href="admin.html" class="active auth-admin" data-i18n="nav_admin">Admin Panel</a>
+            </div>
+            <div class="nav-actions">
+                <div class="lang-toggle">
+                    <button class="lang-btn active" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="kn">KN</button>
+                </div>
+                <button class="btn btn-sm btn-danger auth-logout" onclick="logoutUser()"
+                    data-i18n="nav_logout">Logout</button>
+            </div>
+            <button class="hamburger"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="container">
+            <h1 data-i18n="nav_admin">Admin Panel</h1>
+            <p>Manage workers, service requests, videos, and featured professionals.</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <!-- Stats Row -->
+            <div class="grid grid-4" style="margin-bottom:var(--space-2xl);">
+                <div class="admin-stat-card">
+                    <div class="stat-value" id="sTotalW">0</div>
+                    <div class="stat-label" data-i18n="total_workers">Total Workers</div>
+                </div>
+                <div class="admin-stat-card">
+                    <div class="stat-value" id="sTotalR">0</div>
+                    <div class="stat-label" data-i18n="total_requests">Total Requests</div>
+                </div>
+                <div class="admin-stat-card">
+                    <div class="stat-value" style="color:var(--warning);" id="sPending">0</div>
+                    <div class="stat-label" data-i18n="pending_requests">Pending</div>
+                </div>
+                <div class="admin-stat-card">
+                    <div class="stat-value" style="color:var(--accent-400);" id="sAvgRating">0</div>
+                    <div class="stat-label" data-i18n="avg_rating">Avg Rating</div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs" id="adminTabs">
+                <button class="tab" data-tab="notifications">🔔 Notifications <span class="notification-badge"
+                        id="notifBadge" style="display:none;">0</span></button>
+                <button class="tab active" data-tab="workers" data-i18n="admin_workers">Workers</button>
+                <button class="tab" data-tab="requests" data-i18n="admin_requests">Requests <span
+                        class="notification-badge" id="reqBadge" style="display:none;">0</span></button>
+                <button class="tab" data-tab="videos">🎬 Videos</button>
+                <button class="tab" data-tab="featured" data-i18n="admin_featured">Featured</button>
+                <button class="tab" data-tab="prices" data-i18n="admin_prices">Prices</button>
+            </div>
+
+            <!-- Notifications Tab -->
+            <div class="admin-tab" id="tab-notifications" style="display:none;">
+                <div
+                    style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-lg);">
+                    <h3>🔔 Booking Notifications</h3>
+                    <button class="btn btn-sm btn-secondary" onclick="markAllRead()">✓ Mark All Read</button>
+                </div>
+                <div id="notificationsList"></div>
+                <div class="empty-state" id="noNotifs" style="display:none;">
+                    <div class="empty-state-icon">🔔</div>
+                    <h3>No notifications</h3>
+                    <p>You're all caught up!</p>
+                </div>
+            </div>
+
+            <!-- Workers Tab -->
+            <div class="admin-tab" id="tab-workers">
+                <div
+                    style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-lg);">
+                    <h3>Manage Workers</h3>
+                    <button class="btn btn-primary" onclick="openAddWorker()" data-i18n="add_worker">+ Add
+                        Worker</button>
+                </div>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Profession</th>
+                                <th>Location</th>
+                                <th>Rating</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="workersTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Requests Tab -->
+            <div class="admin-tab" id="tab-requests" style="display:none;">
+                <h3 style="margin-bottom:var(--space-lg);">Service Requests</h3>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Client</th>
+                                <th>Service</th>
+                                <th>Worker</th>
+                                <th>Date</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="requestsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Videos Tab -->
+            <div class="admin-tab" id="tab-videos" style="display:none;">
+                <div
+                    style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-lg);">
+                    <h3>🎬 Manage Training Videos</h3>
+                    <button class="btn btn-primary" onclick="openAddVideo()">+ Upload Video</button>
+                </div>
+                <div id="videosList"></div>
+            </div>
+
+            <!-- Featured Tab -->
+            <div class="admin-tab" id="tab-featured" style="display:none;">
+                <h3 style="margin-bottom:var(--space-lg);">Featured Professionals</h3>
+                <p style="color:var(--text-dark-secondary);margin-bottom:var(--space-lg);">Select which workers appear
+                    as featured on the homepage. Only high-rated workers should be featured.</p>
+                <div id="featuredList"></div>
+            </div>
+
+            <!-- Prices Tab -->
+            <div class="admin-tab" id="tab-prices" style="display:none;">
+                <h3 style="margin-bottom:var(--space-lg);">Service Pricing</h3>
+                <div id="pricesList"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add/Edit Worker Modal -->
+    <div class="modal-overlay" id="workerModal">
+        <div class="modal" style="max-width:600px;">
+            <div class="modal-header">
+                <h3 id="workerModalTitle" data-i18n="add_worker">Add Worker</h3>
+                <button class="modal-close" onclick="closeModal('workerModal')">✕</button>
+            </div>
+            <form id="workerForm">
+                <input type="hidden" id="wfId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="full_name">Full Name</label>
+                        <input type="text" class="form-input" id="wfName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Profession</label>
+                        <input type="text" class="form-input" id="wfProfession" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Skills (comma separated)</label>
+                    <input type="text" class="form-input" id="wfSkills" required
+                        placeholder="e.g. Cooking, Catering, Events">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-i18n="about">Description</label>
+                    <textarea class="form-textarea" id="wfDesc" required style="min-height:80px;"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="location">Location</label>
+                        <select class="form-select" id="wfLocation" required>
+                            <option value="Gasabo">Gasabo</option>
+                            <option value="Kicukiro">Kicukiro</option>
+                            <option value="Nyarugenge">Nyarugenge</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="phone">Phone</label>
+                        <input type="tel" class="form-input" id="wfPhone" value="0789296912">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Conduct Guidelines</label>
+                    <input type="text" class="form-input" id="wfConduct" placeholder="e.g. Punctual, respectful">
+                </div>
+                <div style="display:flex;gap:var(--space-md);">
+                    <button type="submit" class="btn btn-primary" style="flex:1;" data-i18n="save">Save</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('workerModal')"
+                        data-i18n="cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Reply Modal -->
+    <div class="modal-overlay" id="replyModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Reply to Request</h3>
+                <button class="modal-close" onclick="closeModal('replyModal')">✕</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Message to Client</label>
+                <textarea class="form-textarea" id="replyText" placeholder="Type your reply..."
+                    style="min-height:80px;"></textarea>
+            </div>
+            <button class="btn btn-primary" style="width:100%;" onclick="sendReply()">Send Reply</button>
+        </div>
+    </div>
+
+    <!-- Add Video Modal -->
+    <div class="modal-overlay" id="videoModal">
+        <div class="modal" style="max-width:600px;">
+            <div class="modal-header">
+                <h3>Upload Training Video</h3>
+                <button class="modal-close" onclick="closeModal('videoModal')">✕</button>
+            </div>
+            <form id="videoForm">
+                <div class="form-group">
+                    <label class="form-label">Training Category</label>
+                    <select class="form-select" id="vfCategory" required></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Video Title</label>
+                    <input type="text" class="form-input" id="vfTitle" required
+                        placeholder="e.g. Advanced Cooking Techniques">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-textarea" id="vfDescription" required style="min-height:60px;"
+                        placeholder="What will viewers learn?"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">YouTube Video ID</label>
+                        <input type="text" class="form-input" id="vfVideoId" required placeholder="e.g. dQw4w9WgXcQ">
+                        <small style="color:var(--text-dark-secondary);font-size:0.75rem;">The ID from the YouTube URL
+                            after "v=" (e.g. youtube.com/watch?v=<strong>dQw4w9WgXcQ</strong>)</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Duration</label>
+                        <input type="text" class="form-input" id="vfDuration" required placeholder="e.g. 15:30">
+                    </div>
+                </div>
+                <div style="display:flex;gap:var(--space-md);">
+                    <button type="submit" class="btn btn-primary" style="flex:1;">📤 Upload Video</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('videoModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Request Details Modal -->
+    <div class="modal-overlay" id="requestDetailModal">
+        <div class="modal" style="max-width:550px;">
+            <div class="modal-header">
+                <h3>📋 Request Details</h3>
+                <button class="modal-close" onclick="closeModal('requestDetailModal')">✕</button>
+            </div>
+            <div id="requestDetailContent"></div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">
+                        <div class="brand-icon">🍳</div>
+                        <span>Kigali Cooker</span>
+                    </div>
+                    <p style="color:var(--text-dark-secondary);margin-top:var(--space-sm);font-size:0.9rem;">
+                        Connecting you with trusted professionals for catering, cooking, beauty, and more in Kigali.
+                    </p>
+                </div>
+                <div class="footer-col">
+                    <h4 style="color:var(--primary-400);margin-bottom:var(--space-md);">Quick Links</h4>
+                    <ul style="list-style:none;display:flex;flex-direction:column;gap:var(--space-sm);">
+                        <li><a href="index.html" style="color:var(--text-dark-secondary);text-decoration:none;">🏠
+                                Home</a></li>
+                        <li><a href="training.html" style="color:var(--text-dark-secondary);text-decoration:none;">🎓
+                                Training</a></li>
+                        <li><a href="workers.html" style="color:var(--text-dark-secondary);text-decoration:none;">👷
+                                Workers</a></li>
+                        <li><a href="book-service.html"
+                                style="color:var(--text-dark-secondary);text-decoration:none;">📅 Book Service</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4 style="color:var(--primary-400);margin-bottom:var(--space-md);">Contact Us</h4>
+                    <ul style="list-style:none;display:flex;flex-direction:column;gap:var(--space-sm);">
+                        <li><a href="https://wa.me/250789296912" target="_blank"
+                                style="color:var(--text-dark-secondary);text-decoration:none;">💬 WhatsApp:
+                                0789296912</a></li>
+                        <li><a href="mailto:info@kigalicooker.com"
+                                style="color:var(--text-dark-secondary);text-decoration:none;">✉️
+                                info@kigalicooker.com</a></li>
+                        <li><span style="color:var(--text-dark-secondary);">📍 Kigali, Rwanda</span></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4 style="color:var(--primary-400);margin-bottom:var(--space-md);">Follow Us</h4>
+                    <ul style="list-style:none;display:flex;flex-direction:column;gap:var(--space-sm);">
+                        <li><a href="https://www.facebook.com/" target="_blank"
+                                style="color:var(--text-dark-secondary);text-decoration:none;">📘 Facebook</a></li>
+                        <li><a href="https://www.instagram.com/" target="_blank"
+                                style="color:var(--text-dark-secondary);text-decoration:none;">📸 Instagram</a></li>
+                        <li><a href="https://www.twitter.com/" target="_blank"
+                                style="color:var(--text-dark-secondary);text-decoration:none;">🐦 Twitter</a></li>
+                        <li><a href="https://www.youtube.com/" target="_blank"
+                                style="color:var(--text-dark-secondary);text-decoration:none;">📺 YouTube</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p><span data-i18n="developed_by">Developed by</span> <a href="https://meet-temoin.vercel.app/"
+                        target="_blank">Gift Temoin</a></p>
+                <p>&copy; 2026 Kigali Cooker Catering Services Ltd</p>
+            </div>
+        </div>
+    </footer>
+    <a href="https://wa.me/250789296912" target="_blank" class="whatsapp-fab">💬</a>
+
+    <script src="js/data.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        let replyReqId = '';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = getCurrentUser();
+            if (!user || !user.isAdmin) { window.location.href = 'login.html'; return; }
+
+            // Tab switching
+            document.querySelectorAll('#adminTabs .tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('#adminTabs .tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.querySelectorAll('.admin-tab').forEach(p => p.style.display = 'none');
+                    document.getElementById('tab-' + tab.dataset.tab).style.display = '';
+                });
+            });
+
+            loadAdminData();
+
+            // Auto-open notifications if there are unread ones
+            const unread = getNotifications().filter(n => !n.read);
+            if (unread.length > 0) {
+                document.querySelectorAll('#adminTabs .tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.admin-tab').forEach(p => p.style.display = 'none');
+                document.querySelector('[data-tab="notifications"]').classList.add('active');
+                document.getElementById('tab-notifications').style.display = '';
+            }
+        });
+
+        function loadAdminData() {
+            const workers = getWorkers();
+            const requests = getRequests();
+            const pending = requests.filter(r => r.status === 'pending');
+            const notifications = getNotifications();
+            const unreadNotifs = notifications.filter(n => !n.read);
+
+            // Stats
+            document.getElementById('sTotalW').textContent = workers.length;
+            document.getElementById('sTotalR').textContent = requests.length;
+            document.getElementById('sPending').textContent = pending.length;
+            const avg = workers.length > 0 ? (workers.reduce((s, w) => s + w.rating, 0) / workers.length).toFixed(1) : '0';
+            document.getElementById('sAvgRating').textContent = avg;
+
+            // Pending badge
+            const badge = document.getElementById('reqBadge');
+            if (pending.length > 0) { badge.style.display = ''; badge.textContent = pending.length; } else { badge.style.display = 'none'; }
+
+            // Notification badge
+            const notifBadge = document.getElementById('notifBadge');
+            if (unreadNotifs.length > 0) { notifBadge.style.display = ''; notifBadge.textContent = unreadNotifs.length; } else { notifBadge.style.display = 'none'; }
+
+            // ===== NOTIFICATIONS =====
+            const notifList = document.getElementById('notificationsList');
+            const noNotifs = document.getElementById('noNotifs');
+            if (notifications.length === 0) {
+                notifList.style.display = 'none';
+                noNotifs.style.display = '';
+            } else {
+                notifList.style.display = '';
+                noNotifs.style.display = 'none';
+                notifList.innerHTML = notifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map(n => {
+                    const isUnread = !n.read;
+                    const timeAgo = getTimeAgo(n.createdAt);
+                    const isBooking = n.type === 'request';
+                    return `
+                    <div class="card" style="margin-bottom:var(--space-md);padding:var(--space-md) var(--space-lg);border-left:4px solid ${isUnread ? 'var(--primary-500)' : 'var(--border-dark)'};${isUnread ? 'background:rgba(255,143,0,0.05);' : ''}">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                            <div style="flex:1;">
+                                <div style="display:flex;align-items:center;gap:var(--space-sm);margin-bottom:var(--space-xs);">
+                                    <span style="font-size:1.3rem;">${isBooking ? '📋' : '🔔'}</span>
+                                    ${isUnread ? '<span class="badge badge-pending" style="font-size:0.65rem;padding:2px 6px;">NEW</span>' : ''}
+                                </div>
+                                <p style="font-weight:${isUnread ? '600' : '400'};margin-bottom:4px;">${n.message}</p>
+                                <p style="color:var(--text-dark-secondary);font-size:0.8rem;">⏰ ${timeAgo}</p>
+                                ${n.requestId ? `<div style="margin-top:var(--space-sm);display:flex;gap:var(--space-sm);">
+                                    <button class="btn btn-sm btn-success" onclick="approveFromNotif('${n.requestId}','${n.id}')">✓ Approve</button>
+                                    <button class="btn btn-sm btn-danger" onclick="rejectFromNotif('${n.requestId}','${n.id}')">✕ Reject</button>
+                                    <button class="btn btn-sm btn-secondary" onclick="viewRequestDetail('${n.requestId}')">👁️ View</button>
+                                </div>` : ''}
+                            </div>
+                            <button class="btn btn-sm" style="opacity:0.5;" onclick="dismissNotif('${n.id}')" title="Dismiss">✕</button>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+
+            // ===== WORKERS TABLE =====
+            document.getElementById('workersTable').innerHTML = workers.map(w => `
+                <tr>
+                    <td style="font-weight:600;">${w.id}</td>
+                    <td>${w.name}</td>
+                    <td>${w.profession}</td>
+                    <td>📍 ${w.location}</td>
+                    <td><span style="color:var(--primary-400);">⭐ ${w.rating}</span></td>
+                    <td><span class="badge ${w.status === 'active' ? 'badge-completed' : 'badge-cancelled'}">${w.status}</span></td>
+                    <td style="display:flex;gap:4px;flex-wrap:wrap;">
+                        <button class="btn btn-sm btn-secondary" onclick="editWorker('${w.id}')">✏️</button>
+                        <button class="btn btn-sm ${w.status === 'active' ? 'btn-danger' : 'btn-success'}" onclick="toggleWorkerStatus('${w.id}')">${w.status === 'active' ? 'Suspend' : 'Activate'}</button>
+                        <button class="btn btn-sm btn-danger" onclick="removeWorker('${w.id}')">🗑️</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            // ===== REQUESTS TABLE =====
+            document.getElementById('requestsTable').innerHTML = requests.map(r => `
+                <tr>
+                    <td style="font-weight:600;">${r.id}</td>
+                    <td>${r.userName}</td>
+                    <td>${r.serviceName}</td>
+                    <td>${r.workerName}</td>
+                    <td>${r.date}</td>
+                    <td style="color:var(--primary-400);">${formatPrice(r.price)}</td>
+                    <td><span class="badge badge-${r.status}">${r.status}</span></td>
+                    <td style="display:flex;gap:4px;flex-wrap:wrap;">
+                        ${r.status === 'pending' ? `
+                            <button class="btn btn-sm btn-success" onclick="updateReqStatus('${r.id}','confirmed')">✓ Approve</button>
+                            <button class="btn btn-sm btn-danger" onclick="updateReqStatus('${r.id}','cancelled')">✕ Reject</button>
+                            <button class="btn btn-sm btn-accent" onclick="openReassign('${r.id}')">🔄 Reassign</button>
+                        ` : ''}
+                        ${r.status === 'confirmed' ? `<button class="btn btn-sm btn-accent" onclick="updateReqStatus('${r.id}','completed')">✓ Complete</button>` : ''}
+                        <button class="btn btn-sm btn-secondary" onclick="viewRequestDetail('${r.id}')">👁️</button>
+                        <button class="btn btn-sm btn-secondary" onclick="openReply('${r.id}')">💬</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            // ===== VIDEOS LIST =====
+            const training = getTraining();
+            document.getElementById('videosList').innerHTML = training.map(cat => `
+                <div class="card" style="margin-bottom:var(--space-lg);padding:var(--space-lg);">
+                    <h4 style="margin-bottom:var(--space-md);">${cat.icon} ${cat.name} <span style="color:var(--text-dark-secondary);font-size:0.85rem;font-weight:400;">(${cat.videos.length} videos)</span></h4>
+                    ${cat.videos.map((v, vi) => `
+                        <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-sm) var(--space-md);border-radius:var(--radius-md);background:var(--bg-dark-tertiary);margin-bottom:var(--space-sm);">
+                            <div style="flex:1;">
+                                <span style="font-weight:500;">🎬 ${v.title}</span>
+                                <span style="color:var(--text-dark-secondary);font-size:0.8rem;margin-left:var(--space-sm);">⏱ ${v.duration}</span>
+                                <p style="color:var(--text-dark-secondary);font-size:0.85rem;margin-top:2px;">${v.description}</p>
+                            </div>
+                            <button class="btn btn-sm btn-danger" onclick="deleteVideo('${cat.id}',${vi})" title="Delete">🗑️</button>
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+
+            // ===== FEATURED LIST =====
+            document.getElementById('featuredList').innerHTML = workers.map(w => `
+                <div class="card" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-md);padding:var(--space-md) var(--space-lg);">
+                    <div>
+                        <strong>${w.name}</strong> — ${w.profession}
+                        <span style="color:var(--primary-400);margin-left:var(--space-sm);">⭐ ${w.rating}</span>
+                    </div>
+                    <label style="display:flex;align-items:center;gap:var(--space-sm);cursor:pointer;">
+                        <input type="checkbox" ${w.featured ? 'checked' : ''} onchange="toggleFeatured('${w.id}',this.checked)" style="width:20px;height:20px;accent-color:var(--primary-500);">
+                        <span class="badge ${w.featured ? 'badge-featured' : 'badge-pending'}">${w.featured ? 'Featured' : 'Not Featured'}</span>
+                    </label>
+                </div>
+            `).join('');
+
+            // ===== PRICES LIST =====
+            const services = getServices();
+            document.getElementById('pricesList').innerHTML = services.map(s => `
+                <div class="card" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-md);padding:var(--space-md) var(--space-lg);">
+                    <div>${s.icon} <strong>${s.name}</strong></div>
+                    <div style="display:flex;align-items:center;gap:var(--space-md);">
+                        <input type="number" class="form-input" style="width:140px;padding:8px 12px;" value="${s.price}" id="price-${s.id}">
+                        <span style="color:var(--text-dark-secondary);font-size:0.8rem;">${s.unit}</span>
+                        <button class="btn btn-sm btn-primary" onclick="updatePrice('${s.id}')">Update</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ===== NOTIFICATIONS =====
+        function getTimeAgo(dateStr) {
+            const diff = Date.now() - new Date(dateStr).getTime();
+            const mins = Math.floor(diff / 60000);
+            if (mins < 1) return 'Just now';
+            if (mins < 60) return mins + ' min ago';
+            const hours = Math.floor(mins / 60);
+            if (hours < 24) return hours + 'h ago';
+            const days = Math.floor(hours / 24);
+            return days + 'd ago';
+        }
+
+        function approveFromNotif(requestId, notifId) {
+            updateReqStatus(requestId, 'confirmed');
+            markNotifRead(notifId);
+            showToast('Booking approved! ✓', 'success');
+        }
+
+        function rejectFromNotif(requestId, notifId) {
+            updateReqStatus(requestId, 'cancelled');
+            markNotifRead(notifId);
+            showToast('Booking rejected.', 'info');
+        }
+
+        function markNotifRead(id) {
+            const notifs = getNotifications();
+            const n = notifs.find(n => n.id === id);
+            if (n) { n.read = true; saveNotifications(notifs); }
+            loadAdminData();
+        }
+
+        function markAllRead() {
+            const notifs = getNotifications();
+            notifs.forEach(n => n.read = true);
+            saveNotifications(notifs);
+            loadAdminData();
+            showToast('All notifications marked as read.', 'info');
+        }
+
+        function dismissNotif(id) {
+            const notifs = getNotifications().filter(n => n.id !== id);
+            saveNotifications(notifs);
+            loadAdminData();
+        }
+
+        function viewRequestDetail(requestId) {
+            const requests = getRequests();
+            const r = requests.find(r => r.id === requestId);
+            if (!r) { showToast('Request not found.', 'error'); return; }
+            const content = document.getElementById('requestDetailContent');
+            content.innerHTML = `
+                <div style="padding:var(--space-md);">
+                    <div style="text-align:center;margin-bottom:var(--space-lg);">
+                        <span class="badge badge-${r.status}" style="font-size:0.9rem;padding:6px 16px;">${r.status.toUpperCase()}</span>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-md);">
+                        <div><strong style="color:var(--text-dark-secondary);">Request ID</strong><p>${r.id}</p></div>
+                        <div><strong style="color:var(--text-dark-secondary);">Client</strong><p>${r.userName}</p></div>
+                        <div><strong style="color:var(--text-dark-secondary);">Service</strong><p>${r.serviceName}</p></div>
+                        <div><strong style="color:var(--text-dark-secondary);">Worker</strong><p>${r.workerName}</p></div>
+                        <div><strong style="color:var(--text-dark-secondary);">Date</strong><p>${r.date}</p></div>
+                        <div><strong style="color:var(--text-dark-secondary);">Time</strong><p>${r.time}</p></div>
+                        <div><strong style="color:var(--text-dark-secondary);">Price</strong><p style="color:var(--primary-400);font-weight:600;">${formatPrice(r.price)}</p></div>
+                        <div><strong style="color:var(--text-dark-secondary);">Submitted</strong><p>${new Date(r.createdAt).toLocaleString()}</p></div>
+                    </div>
+                    ${r.notes ? `<div style="margin-top:var(--space-md);padding:var(--space-md);background:var(--bg-dark-tertiary);border-radius:var(--radius-md);"><strong style="color:var(--text-dark-secondary);">Client Notes:</strong><p style="margin-top:4px;">${r.notes}</p></div>` : ''}
+                    ${r.message ? `<div style="margin-top:var(--space-md);padding:var(--space-md);background:rgba(0,137,123,0.1);border-radius:var(--radius-md);border-left:3px solid var(--accent-500);"><strong style="color:var(--accent-400);">Your Reply:</strong><p style="margin-top:4px;">${r.message}</p></div>` : ''}
+                    ${r.review ? `<div style="margin-top:var(--space-md);padding:var(--space-md);background:rgba(255,143,0,0.1);border-radius:var(--radius-md);border-left:3px solid var(--primary-500);"><strong style="color:var(--primary-400);">Client Review: ${'⭐'.repeat(r.rating)}</strong><p style="margin-top:4px;">${r.review}</p></div>` : ''}
+                    ${r.status === 'pending' ? `
+                        <div style="margin-top:var(--space-xl);display:grid;grid-template-columns:1fr 1fr;gap:var(--space-md);">
+                            <button class="btn btn-success" onclick="updateReqStatus('${r.id}','confirmed');closeModal('requestDetailModal');">✓ Approve Request</button>
+                            <button class="btn btn-danger" onclick="updateReqStatus('${r.id}','cancelled');closeModal('requestDetailModal');">✕ Reject Request</button>
+                            <button class="btn btn-accent" style="grid-column: span 2;" onclick="openReassign('${r.id}');closeModal('requestDetailModal');">🔄 Reassign Worker</button>
+                        </div>` : ''}
+                </div>
+            `;
+            openModal('requestDetailModal');
+        }
+
+        // ===== WORKER CRUD =====
+        function openAddWorker() {
+            document.getElementById('workerModalTitle').textContent = t('add_worker');
+            document.getElementById('workerForm').reset();
+            document.getElementById('wfId').value = '';
+            openModal('workerModal');
+        }
+
+        function editWorker(id) {
+            const w = getWorkers().find(w => w.id === id);
+            if (!w) return;
+            document.getElementById('workerModalTitle').textContent = t('edit_worker');
+            document.getElementById('wfId').value = w.id;
+            document.getElementById('wfName').value = w.name;
+            document.getElementById('wfProfession').value = w.profession;
+            document.getElementById('wfSkills').value = w.skills.join(', ');
+            document.getElementById('wfDesc').value = w.description;
+            document.getElementById('wfLocation').value = w.location;
+            document.getElementById('wfPhone').value = w.phone;
+            document.getElementById('wfConduct').value = w.conduct;
+            openModal('workerModal');
+        }
+
+        document.getElementById('workerForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const workers = getWorkers();
+            const id = document.getElementById('wfId').value;
+            const data = {
+                name: document.getElementById('wfName').value.trim(),
+                profession: document.getElementById('wfProfession').value.trim(),
+                skills: document.getElementById('wfSkills').value.split(',').map(s => s.trim()).filter(Boolean),
+                description: document.getElementById('wfDesc').value.trim(),
+                location: document.getElementById('wfLocation').value,
+                phone: document.getElementById('wfPhone').value.trim(),
+                conduct: document.getElementById('wfConduct').value.trim(),
+            };
+
+            if (id) {
+                const idx = workers.findIndex(w => w.id === id);
+                if (idx !== -1) Object.assign(workers[idx], data);
+                showToast('Worker updated!', 'success');
+            } else {
+                workers.push({ id: generateId('WK'), ...data, rating: 0, reviews: 0, verified: true, featured: false, status: 'active', photo: '' });
+                showToast('Worker added!', 'success');
+            }
+            saveWorkers(workers);
+            closeModal('workerModal');
+            loadAdminData();
+        });
+
+        function toggleWorkerStatus(id) {
+            const workers = getWorkers();
+            const w = workers.find(w => w.id === id);
+            if (w) { w.status = w.status === 'active' ? 'suspended' : 'active'; saveWorkers(workers); loadAdminData(); showToast('Worker status updated!', 'info'); }
+        }
+
+        function removeWorker(id) {
+            if (!confirm('Remove this worker permanently?')) return;
+            const workers = getWorkers().filter(w => w.id !== id);
+            saveWorkers(workers);
+            loadAdminData();
+            showToast('Worker removed.', 'info');
+        }
+
+        // ===== REQUESTS =====
+        function updateReqStatus(id, status) {
+            const requests = getRequests();
+            const r = requests.find(r => r.id === id);
+            if (r) { r.status = status; saveRequests(requests); loadAdminData(); showToast('Request ' + status + '!', 'success'); }
+        }
+
+        function openReply(id) { replyReqId = id; document.getElementById('replyText').value = ''; openModal('replyModal'); }
+
+        function sendReply() {
+            const text = document.getElementById('replyText').value.trim();
+            if (!text) { showToast('Please enter a reply.', 'error'); return; }
+            const requests = getRequests();
+            const r = requests.find(r => r.id === replyReqId);
+            if (r) { r.message = text; saveRequests(requests); }
+            closeModal('replyModal');
+            showToast('Reply sent to client!', 'success');
+        }
+
+        // ===== VIDEOS =====
+        function openAddVideo() {
+            document.getElementById('videoForm').reset();
+            const cats = getTraining();
+            const sel = document.getElementById('vfCategory');
+            sel.innerHTML = cats.map(c => `<option value="${c.id}">${c.icon} ${c.name}</option>`).join('');
+            openModal('videoModal');
+        }
+
+        document.getElementById('videoForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const catId = document.getElementById('vfCategory').value;
+            const training = getTraining();
+            const cat = training.find(c => c.id === catId);
+            if (!cat) { showToast('Category not found!', 'error'); return; }
+
+            cat.videos.push({
+                title: document.getElementById('vfTitle').value.trim(),
+                description: document.getElementById('vfDescription').value.trim(),
+                videoId: document.getElementById('vfVideoId').value.trim(),
+                duration: document.getElementById('vfDuration').value.trim()
+            });
+
+            saveTraining(training);
+            closeModal('videoModal');
+            loadAdminData();
+            showToast('Video uploaded successfully! 🎬', 'success');
+        });
+
+        function deleteVideo(catId, videoIndex) {
+            if (!confirm('Delete this video?')) return;
+            const training = getTraining();
+            const cat = training.find(c => c.id === catId);
+            if (cat) {
+                cat.videos.splice(videoIndex, 1);
+                saveTraining(training);
+                loadAdminData();
+                showToast('Video deleted.', 'info');
+            }
+        }
+
+        // ===== FEATURED =====
+        function toggleFeatured(id, checked) {
+            const workers = getWorkers();
+            const w = workers.find(w => w.id === id);
+            if (w) { w.featured = checked; saveWorkers(workers); loadAdminData(); showToast(checked ? 'Worker featured!' : 'Worker unfeatured.', 'info'); }
+        }
+
+        // ===== REASSIGN =====
+        let reassignReqId = '';
+        function openReassign(requestId) {
+            reassignReqId = requestId;
+            const workers = getWorkers().filter(w => w.status === 'active');
+            const content = document.getElementById('requestDetailContent'); // Reusing detail modal
+            content.innerHTML = `
+                <div style="padding:var(--space-md);">
+                    <h3 style="margin-bottom:var(--space-lg);">Select New Worker</h3>
+                    <div style="display:flex;flex-direction:column;gap:var(--space-sm);">
+                        ${workers.map(w => `
+                            <div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:var(--space-md);">
+                                <div>
+                                    <strong>${w.name}</strong><br>
+                                    <small>${w.profession} • ⭐${w.rating}</small>
+                                </div>
+                                <button class="btn btn-sm btn-primary" onclick="confirmReassign('${w.id}','${w.name}')">Assign</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            openModal('requestDetailModal');
+        }
+
+        function confirmReassign(workerId, workerName) {
+            const requests = getRequests();
+            const r = requests.find(r => r.id === reassignReqId);
+            if (r) {
+                r.workerId = workerId;
+                r.workerName = workerName;
+                saveRequests(requests);
+                showToast('Worker reassigned to ' + workerName, 'success');
+                closeModal('requestDetailModal');
+                loadAdminData();
+            }
+        }
+    </script>
+</body>
+
+</html>

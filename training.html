@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training & Skills - Kigali Cooker Catering</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">
+                <div class="brand-icon">🍳</div><span>Kigali Cooker</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" data-i18n="nav_home">Home</a>
+                <a href="training.html" class="active" data-i18n="nav_training">Training</a>
+                <a href="workers.html" data-i18n="nav_workers">Workers</a>
+                <a href="book-service.html" data-i18n="nav_services">Book Service</a>
+                <a href="dashboard.html" class="auth-dashboard" data-i18n="nav_dashboard">Dashboard</a>
+                <a href="admin.html" class="auth-admin" data-i18n="nav_admin">Admin Panel</a>
+            </div>
+            <div class="nav-actions">
+                <div class="lang-toggle">
+                    <button class="lang-btn active" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="kn">KN</button>
+                </div>
+                <a href="login.html" class="btn btn-sm btn-secondary auth-login" data-i18n="nav_login">Login</a>
+                <a href="register.html" class="btn btn-sm btn-primary auth-register"
+                    data-i18n="nav_register">Register</a>
+                <button class="btn btn-sm btn-danger auth-logout" onclick="logoutUser()" style="display:none"
+                    data-i18n="nav_logout">Logout</button>
+            </div>
+            <button class="hamburger"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="container">
+            <h1 data-i18n="training_title">Training & Skills</h1>
+            <p data-i18n="training_subtitle">Learn practical skills through our training videos.</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="tabs" id="categoryTabs"></div>
+            <div id="trainingContent"></div>
+        </div>
+    </section>
+
+    <!-- Video Modal -->
+    <div class="modal-overlay" id="videoModal">
+        <div class="modal" style="max-width:700px;">
+            <div class="modal-header">
+                <h3 id="videoTitle"></h3>
+                <button class="modal-close" onclick="closeVideoModal()">✕</button>
+            </div>
+            <div class="video-embed" id="videoEmbed"></div>
+        </div>
+    </div>
+
+    <!-- Footer placeholder (dynamic) -->
+    <footer class="footer"></footer>
+    <a href="https://wa.me/250789296912" target="_blank" class="whatsapp-fab">💬</a>
+
+    <script src="js/data.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        let activeCategory = 'all';
+        document.addEventListener('DOMContentLoaded', () => {
+            const cats = getTraining();
+            const tabs = document.getElementById('categoryTabs');
+            tabs.innerHTML = `<button class="tab active" data-cat="all" data-i18n="all">All</button>` +
+                cats.map(c => `<button class="tab" data-cat="${c.id}">${c.icon} ${c.name}</button>`).join('');
+            tabs.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    activeCategory = tab.dataset.cat;
+                    renderTraining();
+                });
+            });
+            // Check hash
+            if (window.location.hash) {
+                const id = window.location.hash.slice(1);
+                const matchTab = tabs.querySelector(`[data-cat="${id}"]`);
+                if (matchTab) { matchTab.click(); }
+            }
+            renderTraining();
+        });
+
+        function renderTraining() {
+            const cats = getTraining();
+            const filtered = activeCategory === 'all' ? cats : cats.filter(c => c.id === activeCategory);
+            const container = document.getElementById('trainingContent');
+            container.innerHTML = filtered.map(cat => `
+        <div style="margin-bottom:var(--space-2xl);" id="${cat.id}">
+          <h2 style="font-size:1.5rem;margin-bottom:var(--space-lg);">${cat.icon} ${cat.name}</h2>
+          <div class="grid grid-3">
+            ${cat.videos.map((v, i) => `
+              <div class="training-card" onclick="openVideo('${v.title}','${v.videoId}')">
+                <div class="training-thumbnail">
+                  <div style="width:100%;height:100%;background:linear-gradient(135deg,hsl(${i * 40 + 160},60%,30%),hsl(${i * 40 + 180},50%,45%));display:flex;align-items:center;justify-content:center;font-size:3rem;">${cat.icon}</div>
+                  <div class="play-btn-overlay">▶</div>
+                </div>
+                <div class="training-card-body">
+                  <span class="training-category">${cat.name}</span>
+                  <h3>${v.title}</h3>
+                  <p>${v.description}</p>
+                  <p style="color:var(--primary-400);font-size:0.85rem;margin-top:var(--space-sm);">⏱ ${v.duration}</p>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+        }
+
+        function openVideo(title, videoId) {
+            document.getElementById('videoTitle').textContent = title;
+            document.getElementById('videoEmbed').innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" allowfullscreen allow="autoplay"></iframe>`;
+            openModal('videoModal');
+        }
+
+        function closeVideoModal() {
+            document.getElementById('videoEmbed').innerHTML = '';
+            closeModal('videoModal');
+        }
+    </script>
+</body>
+
+</html>

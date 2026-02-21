@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book a Service - Kigali Cooker Catering</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">
+                <div class="brand-icon">🍳</div><span>Kigali Cooker</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" data-i18n="nav_home">Home</a>
+                <a href="training.html" data-i18n="nav_training">Training</a>
+                <a href="workers.html" data-i18n="nav_workers">Workers</a>
+                <a href="book-service.html" class="active" data-i18n="nav_services">Book Service</a>
+                <a href="dashboard.html" class="auth-dashboard" data-i18n="nav_dashboard">Dashboard</a>
+                <a href="admin.html" class="auth-admin" data-i18n="nav_admin">Admin Panel</a>
+            </div>
+            <div class="nav-actions">
+                <div class="lang-toggle">
+                    <button class="lang-btn active" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="kn">KN</button>
+                </div>
+                <a href="login.html" class="btn btn-sm btn-secondary auth-login" data-i18n="nav_login">Login</a>
+                <a href="register.html" class="btn btn-sm btn-primary auth-register"
+                    data-i18n="nav_register">Register</a>
+                <button class="btn btn-sm btn-danger auth-logout" onclick="logoutUser()" style="display:none"
+                    data-i18n="nav_logout">Logout</button>
+            </div>
+            <button class="hamburger"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="container">
+            <h1 data-i18n="nav_services">Book a Service</h1>
+            <p>Select a service and choose a professional worker.</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div style="display:grid;grid-template-columns:2fr 1fr;gap:var(--space-xl);">
+                <!-- Booking Form -->
+                <div>
+                    <form id="bookingForm" class="card" style="padding:var(--space-xl);">
+                        <div class="form-group">
+                            <label class="form-label" data-i18n="select_service">Select Service</label>
+                            <select class="form-select" id="bookService" required>
+                                <option value="">-- Choose a service --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" data-i18n="select_worker">Select Worker</label>
+                            <select class="form-select" id="bookWorker" required>
+                                <option value="">-- Choose a worker --</option>
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" data-i18n="select_date">Select Date</label>
+                                <input type="date" class="form-input" id="bookDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" data-i18n="select_time">Select Time</label>
+                                <input type="time" class="form-input" id="bookTime" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Additional Notes</label>
+                            <textarea class="form-textarea" id="bookNotes"
+                                placeholder="Any special requirements or notes..." rows="3"
+                                style="min-height:80px;"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg" style="width:100%;"
+                            data-i18n="place_order">Place Order</button>
+                    </form>
+                </div>
+                <!-- Booking Summary -->
+                <div>
+                    <div class="booking-summary" id="bookingSummary">
+                        <h3 data-i18n="booking_summary">Booking Summary</h3>
+                        <div class="booking-line">
+                            <span data-i18n="service">Service</span>
+                            <span class="value" id="sumService">—</span>
+                        </div>
+                        <div class="booking-line">
+                            <span data-i18n="worker">Worker</span>
+                            <span class="value" id="sumWorker">—</span>
+                        </div>
+                        <div class="booking-line">
+                            <span data-i18n="date">Date</span>
+                            <span class="value" id="sumDate">—</span>
+                        </div>
+                        <div class="booking-line">
+                            <span data-i18n="select_time">Time</span>
+                            <span class="value" id="sumTime">—</span>
+                        </div>
+                        <div class="booking-total">
+                            <span data-i18n="total">Total</span>
+                            <span class="value" id="sumTotal">—</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Success Modal -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal" style="text-align:center;">
+            <div style="font-size:4rem;margin-bottom:var(--space-lg);">✅</div>
+            <h3 style="margin-bottom:var(--space-md);">Request Submitted!</h3>
+            <p style="color:var(--text-dark-secondary);margin-bottom:var(--space-xl);" data-i18n="booking_success">Your
+                request has been received. We will reply as soon as possible.</p>
+            <a href="dashboard.html" class="btn btn-primary" data-i18n="nav_dashboard">Go to Dashboard</a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">
+                        <div class="brand-icon">🍳</div><span>Kigali Cooker</span>
+                    </div>
+                    <p style="color:var(--text-dark-secondary);margin-top:var(--space-sm);font-size:0.9rem;">Connecting
+                        you with trusted professionals for catering, cooking, beauty, and more in Kigali.</p>
+                </div>
+                <div class="footer-col">
+                    <h4 style="color:var(--primary-400);margin-bottom:var(--space-md);">Quick Links</h4>
+                    <ul style="list-style:none;display:flex;flex-direction:column;gap:var(--space-sm);">
+                        <li><a href="index.html" style="color:var(--text-dark-secondary);text-decoration:none;">🏠
+                                Home</a></li>
+                        <li><a href="training.html" style="color:var(--text-dark-secondary);text-decoration:none;">🎓
+                                Training</a></li>
+                        <li><a href="workers.html" style="color:var(--text-dark-secondary);text-decoration:none;">👷
+                                Workers</a></li>
+                        <li><a href="book-service.html"
+                                style="color:var(--text-dark-secondary);text-decoration:none;">📅 Book Service</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4 style="color:var(--primary-400);margin-bottom:var(--space-md);">Contact Us</h4>
+                    <ul style="list-style:none;display:flex;flex-direction:column;gap:var(--space-sm);">
+                        <li><a href="https://wa.me/250789296912" target="_blank"
+                                style="color:var(--text-dark-secondary);text-decoration:none;">💬 WhatsApp:
+                                0789296912</a></li>
+                        <li><a href="mailto:info@kigalicooker.com"
+                                style="color:var(--text-dark-secondary);text-decoration:none;">✉️
+                                info@kigalicooker.com</a></li>
+                        <li><span style="color:var(--text-dark-secondary);">📍 Kigali, Rwanda</span></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4 style="color:var(--primary-400);margin-bottom:var(--space-md);">Follow Us</h4>
+                    <ul style="list-style:none;display:flex;flex-direction:column;gap:var(--space-sm);">
+                        <li><a href="https://www.facebook.com/" target="_blank"
+                                style="color:var(--text-dark-secondary);text-decoration:none;">📘 Facebook</a></li>
+                        <li><a href="https://www.instagram.com/" target="_blank"
+                                style="color:var(--text-dark-secondary);text-decoration:none;">📸 Instagram</a></li>
+                        <li><a href="https://www.twitter.com/" target="_blank"
+                                style="color:var(--text-dark-secondary);text-decoration:none;">🐦 Twitter</a></li>
+                        <li><a href="https://www.youtube.com/" target="_blank"
+                                style="color:var(--text-dark-secondary);text-decoration:none;">📺 YouTube</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p><span data-i18n="developed_by">Developed by</span> <a href="https://meet-temoin.vercel.app/"
+                        target="_blank">Gift Temoin</a></p>
+                <p>&copy; 2026 Kigali Cooker Catering Services Ltd</p>
+            </div>
+        </div>
+    </footer>
+    <a href="https://wa.me/250789296912" target="_blank" class="whatsapp-fab">💬</a>
+
+    <script src="js/data.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const services = getServices();
+            const workers = getWorkers().filter(w => w.verified && w.status === 'active');
+            const params = new URLSearchParams(window.location.search);
+            const preWorker = params.get('worker');
+
+            // Populate services
+            const svcSelect = document.getElementById('bookService');
+            services.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.id; opt.textContent = `${s.icon} ${s.name} — ${formatPrice(s.price)}`;
+                opt.dataset.price = s.price; opt.dataset.name = s.name;
+                svcSelect.appendChild(opt);
+            });
+
+            // Populate workers
+            const wrkSelect = document.getElementById('bookWorker');
+            workers.forEach(w => {
+                const opt = document.createElement('option');
+                opt.value = w.id; opt.textContent = `${w.name} — ${w.profession} (⭐${w.rating})`;
+                opt.dataset.name = w.name;
+                wrkSelect.appendChild(opt);
+            });
+
+            // Pre-select worker
+            if (preWorker) wrkSelect.value = preWorker;
+
+            // Set min date to tomorrow
+            const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('bookDate').min = tomorrow.toISOString().split('T')[0];
+
+            // Update summary on change
+            svcSelect.addEventListener('change', updateSummary);
+            wrkSelect.addEventListener('change', updateSummary);
+            document.getElementById('bookDate').addEventListener('change', updateSummary);
+            document.getElementById('bookTime').addEventListener('change', updateSummary);
+            updateSummary();
+
+            // Submit
+            document.getElementById('bookingForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const user = getCurrentUser();
+                if (!user) { showToast('Please login to book a service!', 'error'); setTimeout(() => window.location.href = 'login.html', 1500); return; }
+
+                const svc = services.find(s => s.id === svcSelect.value);
+                const wrk = workers.find(w => w.id === wrkSelect.value);
+                if (!svc || !wrk) { showToast('Please select a service and worker.', 'error'); return; }
+
+                const request = {
+                    id: generateId('RQ'), userId: user.id, userName: user.name,
+                    workerId: wrk.id, workerName: wrk.name,
+                    serviceId: svc.id, serviceName: svc.name,
+                    date: document.getElementById('bookDate').value,
+                    time: document.getElementById('bookTime').value,
+                    status: 'pending', price: svc.price,
+                    notes: document.getElementById('bookNotes').value,
+                    createdAt: new Date().toISOString(), message: ''
+                };
+
+                const requests = getRequests(); requests.push(request); saveRequests(requests);
+
+                // Add notification for admin
+                const notifs = getNotifications();
+                notifs.push({ id: generateId('N'), type: 'request', requestId: request.id, message: `📋 New booking request from ${user.name} for ${svc.name} on ${request.date} at ${request.time} — ${formatPrice(svc.price)}`, read: false, createdAt: new Date().toISOString() });
+                saveNotifications(notifs);
+
+                openModal('successModal');
+            });
+        });
+
+        function updateSummary() {
+            const svcOpt = document.getElementById('bookService').selectedOptions[0];
+            const wrkOpt = document.getElementById('bookWorker').selectedOptions[0];
+            document.getElementById('sumService').textContent = svcOpt && svcOpt.value ? svcOpt.dataset.name : '—';
+            document.getElementById('sumWorker').textContent = wrkOpt && wrkOpt.value ? wrkOpt.dataset.name : '—';
+            document.getElementById('sumDate').textContent = document.getElementById('bookDate').value || '—';
+            document.getElementById('sumTime').textContent = document.getElementById('bookTime').value || '—';
+            const price = svcOpt && svcOpt.value ? parseInt(svcOpt.dataset.price) : 0;
+            document.getElementById('sumTotal').textContent = price ? formatPrice(price) : '—';
+        }
+    </script>
+</body>
+
+</html>
