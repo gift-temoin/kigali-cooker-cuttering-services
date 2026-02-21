@@ -259,8 +259,82 @@ function triggerInstall() {
     });
 }
 
-// Redirect logout confirm translation if missing
-if (typeof t !== 'undefined' && !t('logout_confirm')) {
-    // This is just a safety if i18n isn't ready
+
+// QR Modal & Sharing
+function openQRModal() {
+    let modal = document.getElementById('qrModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'qrModal';
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+        <div class="modal" style="max-width:420px;text-align:center;padding:var(--space-2xl);">
+            <div class="modal-header">
+                <h3>Share App / Scan to Install</h3>
+                <button class="modal-close" onclick="closeModal('qrModal')">✕</button>
+            </div>
+            <div class="qr-container" style="margin:var(--space-lg) 0;">
+                <div style="background:#fff;padding:var(--space-md);border-radius:var(--radius-lg);display:inline-block;box-shadow:0 10px 30px rgba(0,0,0,0.2);position:relative;">
+                    <img id="qrCodeImg" style="width:200px;height:200px;display:block;" alt="QR Code">
+                    <div id="qrLoader" style="position:absolute;inset:0;background:#fff;display:flex;align-items:center;justify-content:center;font-size:1.5rem;">⌛</div>
+                </div>
+            </div>
+            <div style="margin-bottom:var(--space-lg);">
+                <p style="color:var(--text-dark-secondary);font-size:0.9rem;line-height:1.5;">Scan this QR code with your smartphone to immediately access **Kigali Cooker Catering Services**.</p>
+            </div>
+            <div style="display:flex;gap:var(--space-sm);justify-content:center;">
+                <button class="btn btn-secondary btn-sm" onclick="downloadQR()">📥 Save QR Code</button>
+                <button class="btn btn-accent btn-sm" onclick="copyAppUrl()">🔗 Copy Link</button>
+            </div>
+        </div>`;
+        document.body.appendChild(modal);
+    }
+
+    let currentUrl = window.location.href;
+    if (currentUrl.startsWith('file:') || currentUrl.includes('localhost') || currentUrl.includes('127.0.0.1')) {
+        currentUrl = 'https://gift-temoin.github.io/kigali-cooker-cuttering-services/';
+    }
+
+    const qrImg = document.getElementById('qrCodeImg');
+    const loader = document.getElementById('qrLoader');
+
+    if (loader) loader.style.display = 'flex';
+    if (qrImg) {
+        qrImg.style.opacity = '0';
+        qrImg.onload = function () {
+            if (loader) loader.style.display = 'none';
+            qrImg.style.opacity = '1';
+            qrImg.style.transition = 'opacity 0.5s ease';
+        };
+        qrImg.onerror = function () {
+            this.src = 'https://placehold.co/200x200?text=QR+Load+Failed';
+            if (loader) loader.style.display = 'none';
+            showToast('Failed to load QR code.', 'error');
+        };
+        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(currentUrl)}&margin=10`;
+    }
+    openModal('qrModal');
+}
+
+function downloadQR() {
+    const qrImg = document.getElementById('qrCodeImg');
+    if (!qrImg) return;
+    const link = document.createElement('a');
+    link.href = qrImg.src;
+    link.download = 'kigali-cooker-qr.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('QR Code download started! 📥');
+}
+
+function copyAppUrl() {
+    let currentUrl = window.location.href;
+    if (currentUrl.startsWith('file:') || currentUrl.includes('localhost')) {
+        currentUrl = 'https://gift-temoin.github.io/kigali-cooker-cuttering-services/';
+    }
+    navigator.clipboard.writeText(currentUrl).then(() => {
+        showToast('Link copied to clipboard! 🔗');
+    });
 }
 
