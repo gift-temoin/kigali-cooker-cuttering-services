@@ -5,6 +5,14 @@ const translations = {
         nav_home: 'Home', nav_training: 'Training', nav_workers: 'Workers',
         nav_services: 'Book Service', nav_login: 'Login', nav_register: 'Register',
         nav_dashboard: 'Dashboard', nav_admin: 'Admin Panel', nav_logout: 'Logout',
+        nav_install: 'Install App',
+        install_banner_title: 'Install Kigali Cooker',
+        install_banner_desc: 'Get the best experience by downloading our app!',
+        logout_confirm: 'Are you sure you want to log out?',
+        nav_install: 'Install App',
+        install_banner_title: 'Install Kigali Cooker',
+        install_banner_desc: 'Get the best experience by downloading our app!',
+        logout_confirm: 'Are you sure you want to log out?',
 
         // Hero
         hero_badge: '🏆 Trusted Professional Services',
@@ -76,6 +84,14 @@ const translations = {
         nav_home: 'Ahabanza', nav_training: 'Amahugurwa', nav_workers: 'Abakozi',
         nav_services: 'Gusaba Serivisi', nav_login: 'Kwinjira', nav_register: 'Kwiyandikisha',
         nav_dashboard: 'Ikibaho', nav_admin: 'Ubuyobozi', nav_logout: 'Gusohoka',
+        nav_install: 'Download App',
+        install_banner_title: 'Ongeramo Kigali Cooker',
+        install_banner_desc: 'Download App yacu ubone serivisi nziza kandi zihuse!',
+        logout_confirm: 'Urabyizeye ko ushaka gusohoka?',
+        nav_install: 'Download App',
+        install_banner_title: 'Ongeramo Kigali Cooker',
+        install_banner_desc: 'Download App yacu ubone serivisi nziza kandi zihuse!',
+        logout_confirm: 'Urabyizeye ko ushaka gusohoka?',
 
         // Hero
         hero_badge: '🏆 Serivisi z\'abahanga bizezwe',

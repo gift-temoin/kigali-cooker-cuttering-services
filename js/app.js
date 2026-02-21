@@ -240,7 +240,41 @@ window.addEventListener('beforeinstallprompt', (e) => {
     deferredPrompt = e;
     const installBtns = document.querySelectorAll('.pwa-install-btn, #installBtn');
     installBtns.forEach(btn => btn.style.display = 'inline-flex');
+
+    // Show floating banner if not seen this session
+    if (!sessionStorage.getItem('kc_bannerDismissed')) {
+        showInstallBanner();
+    }
 });
+
+function showInstallBanner() {
+    if (document.querySelector('.install-banner')) return;
+
+    const banner = document.createElement('div');
+    banner.className = 'install-banner';
+    banner.innerHTML = `
+        <div class="install-banner-content">
+            <div class="install-banner-icon">🍳</div>
+            <div class="install-banner-text">
+                <h4 data-i18n="install_banner_title">${t('install_banner_title') || 'Install Kigali Cooker'}</h4>
+                <p data-i18n="install_banner_desc">${t('install_banner_desc') || 'Download our app for a faster, better experience!'}</p>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="triggerInstall()" data-i18n="nav_install">${t('nav_install') || 'Install'}</button>
+            <button class="install-banner-close" onclick="dismissBanner()">✕</button>
+        </div>
+    `;
+    document.body.appendChild(banner);
+}
+
+function dismissBanner() {
+    const banner = document.querySelector('.install-banner');
+    if (banner) {
+        banner.style.transform = 'translateY(100%)';
+        banner.style.opacity = '0';
+        setTimeout(() => banner.remove(), 500);
+        sessionStorage.setItem('kc_bannerDismissed', 'true');
+    }
+}
 
 function triggerInstall() {
     if (!deferredPrompt) {
@@ -253,6 +287,7 @@ function triggerInstall() {
         if (choiceResult.outcome === 'accepted') {
             console.log('User accepted the install prompt');
             showDownloadProgress();
+            dismissBanner();
         }
         deferredPrompt = null;
         const installBtns = document.querySelectorAll('.pwa-install-btn, #installBtn');
